@@ -1,0 +1,10 @@
+com/matrodriguezpa/comicsearch/model/ComicIssue.class
+com/matrodriguezpa/comicsearch/service/ComicService.class
+com/matrodriguezpa/comicsearch/model/ComicIssue$Publisher.class
+com/matrodriguezpa/comicsearch/service/ComicService$2.class
+com/matrodriguezpa/comicsearch/controller/ComicController.class
+com/matrodriguezpa/comicsearch/config/AppConfig.class
+com/matrodriguezpa/comicsearch/controller/HomeController.class
+com/matrodriguezpa/comicsearch/config/CorsConfig.class
+com/matrodriguezpa/comicsearch/ComicSearchApplication.class
+com/matrodriguezpa/comicsearch/service/ComicService$1.class
