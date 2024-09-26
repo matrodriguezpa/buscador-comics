@@ -1,68 +1,40 @@
-import React, { useState } from "react";
-import axios from "axios";
-import '../index.css';
+import React, { useState } from 'react';
+import { searchComics } from '../services/comicService';  // Import the search function
 
-function ComicSearch() {
-  const [date, setDate] = useState("");
-  const [publisher, setPublisher] = useState("");
-  const [comics, setComics] = useState([]);
+const ComicSearch = () => {
+    const [query, setQuery] = useState('');  // State to store the search query
+    const [comics, setComics] = useState([]);  // State to store search results
 
-  const searchComics = () => {
-    const params = new URLSearchParams();
-    if (date) params.append("date", date);
-    if (publisher) params.append("publisher", publisher);
+    const handleSearch = async () => {
+        try {
+            const response = await searchComics(query);  // Search for comics
+            setComics(response.data);  // Set the comics from the search results
+        } catch (error) {
+            console.error("Error searching comics", error);  // Handle errors
+        }
+    };
 
-    axios
-      .get(`http://localhost:8080/api/comics/new-releases?${params.toString()}`)
-      .then((response) => {
-        console.log("API Response: ", response.data);
-        setComics(response.data || []);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the comics!", error);
-      });
-  };
+    return (
+        <div>
+            <input 
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}  // Update query state on input change
+                placeholder="Search for a comic"
+            />
+            <button onClick={handleSearch}>Search</button>
 
-  return (
-    <div className="main">
-      <div>
-        <label>
-          Release Date:
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-        </label>
-        <label>
-          Publisher:
-          <input
-            type="text"
-            value={publisher}
-            onChange={(e) => setPublisher(e.target.value)}
-          />
-        </label>
-        <button onClick={searchComics}>Search</button>
-      </div>
-
-      <div>
-        {comics.length > 0 ? (
-          <ul>
-            {comics.map((comic) => (
-              <li key={comic.id}>
-                <h2>{comic.title}</h2>
-                <p>Publisher: {comic.publisher?.name || "Unknown"}</p>
-                <p>Release Date: {comic.releaseDate}</p>
-                {/* Add more fields as necessary */}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No comics found.</p>
-        )}
-      </div>
-    </div>
-  );
-}
+            <div className="comics-grid">
+                {comics.map((comic, index) => (
+                    <div key={index} className="comic-item">
+                        <img src={comic.coverPage} alt={comic.title} />
+                        <h3>{comic.title}</h3>
+                        <p>{comic.description}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
 
 export default ComicSearch;

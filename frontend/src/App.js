@@ -1,15 +1,10 @@
 import React from 'react';
-import ComicSearch from './ComicSearch';
-import Header from './Header';
-import Footer from './Footer';
-import './index.css'; // Assuming you have a main CSS file
+import ComicList from './components/ComicList';
 
 function App() {
   return (
-    <div className="app-container">
-      <Header />
-      <ComicSearch />
-      <Footer />
+    <div className="App">
+      <ComicList />
     </div>
   );
 }

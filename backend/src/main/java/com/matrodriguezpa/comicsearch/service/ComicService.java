@@ -1,80 +1,78 @@
 package com.matrodriguezpa.comicsearch.service;
 
-import com.matrodriguezpa.comicsearch.model.ComicIssue;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ComicService {
 
-    private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
+    private static final String BASE_URL = "https://getcomics.info/page/";
 
-    @Value("${comicvine.api.url}")
-    private String comicvineApiUrl;
-
-    @Value("${comicvine.api.key}")
-    private String comicvineApiKey;
-
-    public ComicService(RestTemplate restTemplate, ObjectMapper objectMapper) {
-        this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
+    // Example method to scrape latest comics
+    public List<Map<String, Object>> getLatestComics(int page) {
+        String url = BASE_URL + page;
+        return scrapeComics(url);
     }
 
-    public List<ComicIssue> getComicsByDate(String date) {
-        String url = String.format("%sissues/?api_key=%s&filter=store_date:%s&sort=store_date:desc&format=json",
-                comicvineApiUrl, comicvineApiKey, date);
+    // Example method to scrape Marvel comics
+    public List<Map<String, Object>> getMarvelComics(int page) {
+        String url = "https://getcomics.info/cat/marvel/page/" + page;
+        return scrapeComics(url);
+    }
 
-        System.out.println("Requesting: " + url);
+    // Example method to scrape DC comics
+    public List<Map<String, Object>> getDCComics(int page) {
+        String url = "https://getcomics.info/cat/dc/page/" + page;
+        return scrapeComics(url);
+    }
 
-        ResponseEntity<String> response;
+    // Search for comics
+    public List<Map<String, Object>> getComicsThroughSearch(String query, int page) {
+        String url = "https://getcomics.info/page/" + page + "/?s=" + query.replace(" ", "+");
+        return scrapeComics(url);
+    }
+
+    // Common method to scrape comics
+    private List<Map<String, Object>> scrapeComics(String url) {
+        List<Map<String, Object>> comicsList = new ArrayList<>();
+
         try {
-            response = restTemplate.getForEntity(url, String.class);
-        } catch (Exception e) {
-            throw new RuntimeException("Error during API request: " + e.getMessage(), e);
+            Document doc = Jsoup.connect(url).get();
+            Elements articles = doc.select("article");
+
+            for (Element article : articles) {
+                Map<String, Object> comicData = new HashMap<>();
+
+                String title = article.select(".post-info h1").text();
+                String coverPage = article.select("img").attr("src");
+
+                // Check for the presence of the description element
+                Element descriptionElement = article.select(".post-contents p").first();
+                String description = descriptionElement != null ? descriptionElement.text() : "No description available";
+
+                String detailsUrl = article.select("a").attr("href");
+
+                comicData.put("title", title);
+                comicData.put("coverPage", coverPage);
+                comicData.put("description", description);
+                comicData.put("detailsUrl", detailsUrl);
+
+                comicsList.add(comicData);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            try {
-                JsonNode jsonNode = objectMapper.readTree(response.getBody());
-                return objectMapper.convertValue(jsonNode.get("results"), new TypeReference<List<ComicIssue>>() {
-                });
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to parse response: " + e.getMessage(), e);
-            }
-        } else {
-            throw new RuntimeException("Failed to fetch comics: " + response.getStatusCode());
-        }
+        return comicsList;
     }
 
-    public List<ComicIssue> getComicsByPublisher(String publisherName) {
-        String url = String.format("%sissues/?api_key=%s&filter=publisher:%s&sort=store_date:desc&format=json",
-                comicvineApiUrl, comicvineApiKey, publisherName);
-
-        System.out.println("Requesting: " + url);
-
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        System.out.println("Response: " + response.getBody());
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-            try {
-                JsonNode jsonNode = objectMapper.readTree(response.getBody());
-                return objectMapper.convertValue(jsonNode.get("results"), new TypeReference<List<ComicIssue>>() {
-                });
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to parse response: " + e.getMessage(), e);
-            }
-        } else {
-            throw new RuntimeException("Failed to fetch comics: " + response.getStatusCode());
-        }
-    }
 }

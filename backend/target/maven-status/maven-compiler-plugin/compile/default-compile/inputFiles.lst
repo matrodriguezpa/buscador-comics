@@ -1,7 +1,5 @@
 /home/teo/Documents/buscador-comics/backend/src/main/java/com/matrodriguezpa/comicsearch/ComicSearchApplication.java
-/home/teo/Documents/buscador-comics/backend/src/main/java/com/matrodriguezpa/comicsearch/config/AppConfig.java
-/home/teo/Documents/buscador-comics/backend/src/main/java/com/matrodriguezpa/comicsearch/config/CorsConfig.java
+/home/teo/Documents/buscador-comics/backend/src/main/java/com/matrodriguezpa/comicsearch/client/ComicBooksClient.java
 /home/teo/Documents/buscador-comics/backend/src/main/java/com/matrodriguezpa/comicsearch/controller/ComicController.java
-/home/teo/Documents/buscador-comics/backend/src/main/java/com/matrodriguezpa/comicsearch/controller/HomeController.java
-/home/teo/Documents/buscador-comics/backend/src/main/java/com/matrodriguezpa/comicsearch/model/ComicIssue.java
+/home/teo/Documents/buscador-comics/backend/src/main/java/com/matrodriguezpa/comicsearch/model/Comic.java
 /home/teo/Documents/buscador-comics/backend/src/main/java/com/matrodriguezpa/comicsearch/service/ComicService.java
