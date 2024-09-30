@@ -1,0 +1,13 @@
+# Ignorar carpetas de Node y Java
+Client/node_modules/
+Server/target/
+Server/logs/
+
+# Ignorar archivos de configuración de IDE
+.idea/
+.vscode/
+*.iml
+
+# Ignorar archivos temporales de sistemas operativos
+.DS_Store
+Thumbs.db
