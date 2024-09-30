@@ -1,1 +1,0 @@
-comic search web page
