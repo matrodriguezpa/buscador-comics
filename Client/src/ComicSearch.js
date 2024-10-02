@@ -20,7 +20,7 @@ const ComicSearch = () => {
             query: selectedCategory === 'All' ? query : selectedCategory,
             page: pageNumber,
         };
-        
+
         try {
             const response = await axios.get(baseURL, { params });
             setComics(response.data);
@@ -58,7 +58,13 @@ const ComicSearch = () => {
                         </option>
                     ))}
                 </select>
-                
+                {/*<input
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search comics..."
+                    disabled={selectedCategory !== ''} // Disable if a category is selected
+                />*/}
 
                 <button onClick={handleSearch}>Search</button>
             </div>
@@ -74,23 +80,47 @@ const ComicSearch = () => {
                                 <h3>{comic.title}</h3>
                                 <img src={comic.coverPage} alt={comic.title} />
                                 <p>{comic.description}</p>
+
+                                {/* Adding download links section 
+                                <div>
+                                    <h4>Download Links:</h4>
+                                    <ul>
+                                        {Object.entries(comic.downloadLinks).map(([service, link]) => (
+                                            <li key={service}>
+                                                <a href={link} target="_blank" rel="noopener noreferrer">
+                                                    {service}
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                */}
+
+                                {/* Link to details page */}
+                                <div>
+                                    <a href={comic.detailsUrl} target="_blank" rel="noopener noreferrer">
+                                        View Details
+                                    </a>
+                                </div>
                             </li>
                         ))}
                     </ul>
                 )}
             </div>
-
             <div>
                 <button onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1}>
                     Previous
                 </button>
-                
-                <span> Page {page} of {totalPages} </span>
-                
-                <button onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))} disabled={page === totalPages}>
+
+                <span> Page {page} </span> {/* show the current page number */}
+
+                <button onClick={() => setPage((prev) => prev + 1)} /* No limit on the next page */
+                    disabled={loading} // Disable the button while loading
+                >
                     Next
                 </button>
             </div>
+
         </div>
     );
 };
