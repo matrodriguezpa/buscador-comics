@@ -1,12 +1,17 @@
+// src/App.js
 import React from 'react';
-import ComicList from './components/ComicList';
+import ComicSearch from './ComicSearch';
+import Header from './Header';
+import Footer from './Footer';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <ComicList />
+    <div>
+    <Header/>
+    <ComicSearch />
+    <Footer/>
     </div>
   );
-}
+};
 
 export default App;
